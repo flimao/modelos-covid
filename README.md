@@ -22,7 +22,7 @@ O objetivo do projeto será desenvolver um estudo em um *dataset* de COVID, base
 
 ## *Dataset*
 
-Caminho: [COVID.csv](COVID.csv)
+Caminho: [data/COVID.csv](data/COVID.csv)
 
 A descrição das variáveis contidas no *dataset* pode ser encontradas a seguir:
 
