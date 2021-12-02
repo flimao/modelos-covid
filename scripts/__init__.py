@@ -1,4 +1,5 @@
 __all__ = [
     'metrics',
-    'plots'
+    'plots',
+    'transform'
 ]
