@@ -10,7 +10,7 @@ O objetivo do projeto será desenvolver um estudo em um *dataset* de COVID, base
 
 ## Plano de trabalho
 
-1. __Preparação dos Dados e Verificação de Consistência__: Inicialmente faremos uma verificação da consistência dos dados e caso necessário efetuar eventuais modificações na base de dados. Alguns dos procedimentos que podemos fazer aqui são: Remoção e/ou tratamento de valores faltantes, remoção de duplicatas, ajustes dos tipos de variáveis, análise de _outliers_ entre outras;
+1. [__Preparação dos Dados e Verificação de Consistência__](notebooks_exploration/1-preproc.ipynb): Inicialmente faremos uma verificação da consistência dos dados e caso necessário efetuar eventuais modificações na base de dados. Alguns dos procedimentos que podemos fazer aqui são: Remoção e/ou tratamento de valores faltantes, remoção de duplicatas, ajustes dos tipos de variáveis, análise de _outliers_ entre outras;
 
 2. __Análise Exploratória dos Dados__: Para fazermos a modelagem, precisamos conhecer muito bem os dados que estamos trabalhando. Por isso, nesta parte do projeto faremos análises e gráficos a respeito dos dados que estão utilizando;
 
