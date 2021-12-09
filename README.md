@@ -12,7 +12,7 @@ O objetivo do projeto será desenvolver um estudo em um *dataset* de COVID, base
 
 1. [__Preparação dos Dados e Verificação de Consistência__](notebooks_exploration/1-preproc.ipynb): Inicialmente faremos uma verificação da consistência dos dados e caso necessário efetuar eventuais modificações na base de dados. Alguns dos procedimentos que podemos fazer aqui são: Remoção e/ou tratamento de valores faltantes, remoção de duplicatas, ajustes dos tipos de variáveis, análise de _outliers_ entre outras;
 
-2. __Análise Exploratória dos Dados__: Para fazermos a modelagem, precisamos conhecer muito bem os dados que estamos trabalhando. Por isso, nesta parte do projeto faremos análises e gráficos a respeito dos dados que estão utilizando;
+2. [__Análise Exploratória dos Dados__](notebooks_exploration/2-eda.ipynb): Para fazermos a modelagem, precisamos conhecer muito bem os dados que estamos trabalhando. Por isso, nesta parte do projeto faremos análises e gráficos a respeito dos dados que estão utilizando;
 
 3. __Modelagem dos Dados__: Nesta parte, vamos modelar um classificador para os resultados dos exames de COVID (campo `covid_res`). Vamos ajustar alguns modelos de acordo com alguma métrica de avaliação (a ser escolhida);
 
@@ -34,11 +34,11 @@ A descrição das variáveis contidas no *dataset* pode ser encontradas a seguir
 - **`age`**: Idade do Paciente;
 - **`pregnancy`**: Se a paciente estava grávida ou não (para pacientes mulheres);
 - **`diabetes`**: Se o paciente tem diabetes ou não;
-- **`copd`**: Se opaciente tem COPD ou não;
-- **`asthma`**: Se o paciente tem Asma ou não;
+- **`copd`**: Se o paciente tem COPD (*[chronic obstructive pulmonary disease](https://www.mayoclinic.org/diseases-conditions/copd/symptoms-causes/syc-20353679)*, mais comumente consequência de enfisema e/ou bronquite crônica) ou não;
+- **`asthma`**: Se o paciente tem asma ou não;
 - **`inmsupr`**: Se o paciente apresentou Imunosupressão ou não;
 - **`hypertension`**: Se o paciente tem hipertensão ou não;
-- **`ohter_disease`**: Se o paciente tem outras doenças ou não;
+- **`other_disease`**: Se o paciente tem outras doenças ou não;
 - **`cardiovascular`**: Se o paciente tem doenças cardiácas ou não;
 - **`obesity`**: Se o paciente tem obesidade ou não;
 - **`renal_chronic`**: Se o paciente tem problemas renais ou não;
