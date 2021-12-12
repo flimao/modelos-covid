@@ -1,7 +1,9 @@
+from typing import List
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import seaborn as sns
+from scipy import stats as spst
 
 from sklearn.metrics import mean_absolute_percentage_error as fmape, \
                             mean_squared_error as fmse, \
@@ -261,3 +263,67 @@ def plot_threshold_curve(
 
     return fig
 
+def plot_heatmap_chisq(
+    data: pd.DataFrame,
+    cols_labels: List[str] or None = None,
+    fmt: str = '.1%',
+    fig_kwds: dict = dict(),
+    chisq: bool = False,
+    filtro: str or None = None,
+    cmap_lims: list = [0, 1]
+) -> plt.Figure:
+
+    data = data.copy()
+
+    cols_campos = data.columns
+
+    col1 = data[cols_campos[0]]
+    col2 = data[cols_campos[1]]
+
+    if cols_labels is None:
+        cols_labels = cols_campos
+
+    # tabela de contingencia
+    contingencia = pd.crosstab(col1, col2)  
+    # normalizar pelas linhas: o % plotado é a célula dividido pelo total da margem vertical
+    contingencia_pct = contingencia.apply(lambda col: col / contingencia.sum(axis = 1))
+
+    # figura
+    fig, ax = plt.subplots(**fig_kwds)
+      
+    # plotar heatmap
+    sns.heatmap(
+        contingencia_pct, 
+        annot = True, fmt = fmt, 
+        cmap = 'viridis', vmax = cmap_lims[1], vmin = cmap_lims[0],
+        ax = ax
+    )
+
+    # colorbar
+    cbar = ax.collections[-1].colorbar
+    cbar.ax.yaxis.set_major_formatter(lambda y, pos: f'{y:{fmt}}')
+
+    # eixo x: resultado
+    ax.set_xlabel(cols_labels[1])
+
+    # eixo y
+    ax.set_ylabel(cols_labels[0])
+
+    # titulo de cada subgrafico
+    axtitle = f"'{cols_labels[0]}' vs '{cols_labels[1]}'"
+    if chisq:
+        pvalor = spst.chi2_contingency(contingencia)[1]
+        axtitle += f"\n(p-valor teste $\chi ^2$ = {pvalor:.2%})"
+
+    ax.set_title(axtitle)
+
+    # titulo do gráfico
+    suptitle = 'Tabelas de contingência: % do total de cols, margem vertical'
+    if filtro is not None:
+        suptitle += f'\n(filtro: {filtro})'
+    plt.suptitle(suptitle)
+
+    plt.tight_layout()
+    plt.show()
+
+    return fig
