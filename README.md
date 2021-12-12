@@ -14,7 +14,7 @@ O objetivo do projeto será desenvolver um estudo em um *dataset* de COVID, base
 
 2. [__Análise Exploratória dos Dados__](notebooks_exploration/2-eda.ipynb): Para fazermos a modelagem, precisamos conhecer muito bem os dados que estamos trabalhando. Por isso, nesta parte do projeto faremos análises e gráficos a respeito dos dados que estão utilizando;
 
-3. __Modelagem dos Dados__: Nesta parte, vamos modelar um classificador para os resultados dos exames de COVID (campo `covid_res`). Vamos ajustar alguns modelos de acordo com alguma métrica de avaliação (a ser escolhida);
+3. [__Modelagem dos Dados__](notebooks_exploration/3-modelagem.ipynb): Nesta parte, vamos modelar um classificador para os resultados dos exames de COVID (campo `covid_res`). Vamos ajustar alguns modelos de acordo com alguma métrica de avaliação (a ser escolhida);
 
 4. __Otimização do Modelo__: A partir do modelo escolhido no tópico anterior, vamos tentar aprimorar e garantir um melhor desempenho no modelo, seja fazendo validação cruzada, otimização de parâmetros com `GridSearchCV` ou `RandomizedSearchCV` e até mesmo testar diferentes _thresholds_, ou seja, ao invés de utilizar a função `.predict` do modelo, vamos utilizar a função `.predict_proba` do modelo e a partir das probabilidades determinar qual vai ser o limiar onde será considerado um caso positivo ou negativo);
 
