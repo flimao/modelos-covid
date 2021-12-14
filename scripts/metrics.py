@@ -168,12 +168,12 @@ def calc_threshold_optimization(y_true, y_prob, beta = 1, calcs = dict()):
     # calc a few other metrics
     threshold_opt['precision'] = (
         (threshold_opt.tp / (threshold_opt.tp + threshold_opt.fp))
-            .where(threshold_opt.tp + threshold_opt.fp > 0, 0)
+            .where(threshold_opt.tp + threshold_opt.fp > 0, np.nan)
     )
 
     threshold_opt['recall'] = (
         (threshold_opt.tp / (threshold_opt.tp + threshold_opt.fn))
-            .where(threshold_opt.tp + threshold_opt.fn > 0, 0)
+            .where(threshold_opt.tp + threshold_opt.fn > 0, np.nan)
     )
 
     threshold_opt['accuracy'] = (
@@ -188,7 +188,7 @@ def calc_threshold_optimization(y_true, y_prob, beta = 1, calcs = dict()):
         )
             .where(
                 threshold_opt.precision * beta**2 + threshold_opt.recall > 0,
-                0
+                np.nan
             )
     )
 
