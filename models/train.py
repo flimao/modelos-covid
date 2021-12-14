@@ -11,7 +11,6 @@ import os
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 
 # tooling
@@ -68,9 +67,10 @@ def tratar_valores_faltantes(df):
 
     return df
 
-def montar_modelo(train_test_split_tuple, estimador, opt_params = None, fit = True):
+def montar_modelo(estimador, base, opt_params = None, fit = True):
 
-    X_train, X_test, y_train, y_test = train_test_split_tuple
+    X = covid.drop(columns = 'covid_res')
+    y = covid['covid_res']
 
     # pipeline das colunas numéricas
     pipeline_numericas = Pipeline(steps = [
@@ -83,8 +83,8 @@ def montar_modelo(train_test_split_tuple, estimador, opt_params = None, fit = Tr
     ])
 
     # nome das colunas numericas e categoricas
-    features_numericas = X_train.select_dtypes(exclude = ['object', 'category']).columns
-    features_categoricas = X_train.select_dtypes(include = ['object', 'category']).columns
+    features_numericas = X.select_dtypes(exclude = ['object', 'category']).columns
+    features_categoricas = X.select_dtypes(include = ['object', 'category']).columns
 
     # separador: os dados entram no pipeline e são separados em dois, cada um vai em um pipeline diferente
     separador = ColumnTransformer(transformers = [
@@ -110,8 +110,8 @@ def montar_modelo(train_test_split_tuple, estimador, opt_params = None, fit = Tr
     # fit se a opção for True
     if fit:
         model.fit(
-            X_train,
-            y_train.astype('int8')
+            X,
+            y.astype('int8')
         )
     
     return model
@@ -129,10 +129,49 @@ def preproc_pipe(covid_raw):
 
 if __name__ == '__main__':
 
+    # arquivos
     MODELSCRIPTFILE = os.path.realpath(__file__)
     MODELDIR = os.path.dirname(MODELSCRIPTFILE)
     DBFILE = os.path.join(MODELDIR, r'../data/COVID.csv')
     MODELBINFILE = os.path.join(MODELDIR, r'modelo.model')
+
+    # modelo final
+    estimador_final = ('xgboost', XGBClassifier())
+    opt_params = {
+        'xgboost__base_score': 0.5,
+        'xgboost__booster': 'gbtree',
+        'xgboost__colsample_bylevel': 1,
+        'xgboost__colsample_bynode': 1,
+        'xgboost__colsample_bytree': 1,
+        'xgboost__criterion': 'mae',
+        'xgboost__enable_categorical': False,
+        'xgboost__eval_metric': 'logloss',
+        'xgboost__gamma': 0,
+        'xgboost__gpu_id': -1,
+        'xgboost__importance_type': None,
+        'xgboost__interaction_constraints': '',
+        'xgboost__learning_rate': 0.1,
+        'xgboost__max_delta_step': 0,
+        'xgboost__max_depth': 3,
+        'xgboost__max_features': 'log2',
+        'xgboost__min_child_weight': 1,
+        'xgboost__missing': np.nan,
+        'xgboost__monotone_constraints': '()',
+        'xgboost__n_estimators': 100,
+        'xgboost__n_jobs': -1,
+        'xgboost__num_parallel_tree': 1,
+        'xgboost__objective': 'binary:logistic',
+        'xgboost__predictor': 'auto',
+        'xgboost__reg_alpha': 0,
+        'xgboost__reg_lambda': 1,
+        'xgboost__scale_pos_weight': 1,
+        'xgboost__subsample': 1,
+        'xgboost__tree_method': 'exact',
+        'xgboost__use_label_encoder': True,
+        'xgboost__validate_parameters': 1,
+        'xgboost__verbosity': None
+    }
+    threshold = 0.24 # TODO: implementar classe com API fit predict que implemente o threshold customizado
 
     # import
     covid_raw = pd.read_csv(DBFILE, index_col = 'Unnamed: 0')
@@ -144,17 +183,11 @@ if __name__ == '__main__':
     X = covid.drop(columns = 'covid_res')
     y = covid['covid_res']
 
-    train_test_split_tuple = train_test_split(
-        X, y,
-        test_size = 0.3,
-        stratify = y
-    )
-
     # model
     model = montar_modelo(
-        train_test_split_tuple,
-        estimador = ('teste', LogisticRegression()), # TODO: modelo
-        opt_params = None, # TODO: opt_params
+        base = covid,
+        estimador = estimador_final,
+        opt_params = opt_params,
         fit = True
     )
 
@@ -164,11 +197,8 @@ if __name__ == '__main__':
     # modelo: Pipeline já fitado
     model_export['modelo'] = model
 
-    # train_test_split: tupla com 2 dataframes (X_train, X_test) e 2 series (y_train e y_test)
-    model_export['train_test_split'] = train_test_split_tuple
-
     # base: df covid já transformado
-    model_export['base'] = covid
+    model_export['base_treino'] = covid
 
     # salvar via pickle
     # with open(MODELBINFILE, 'wb') as modelfile:
