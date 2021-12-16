@@ -67,7 +67,25 @@ def tratar_valores_faltantes(df):
 
     return df
 
-def montar_modelo(estimador, base, opt_params = None, fit = True):
+
+# classe para construir Pipelines com predict em função do threshold
+class Pipeline_threshold(Pipeline):
+    def __init__(self, threshold = 0.5, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.threshold = threshold
+    
+    def predict(self, threshold = None, *args, **kwargs):
+        yprobs = self.predict_proba(*args, **kwargs)
+        
+        t = threshold
+        if t is None:
+            t = self.threshold
+
+        return yprobs[:, 1] > t
+
+
+def montar_modelo(estimador, base, threshold = 0.5, opt_params = None, fit = True):
 
     X = covid.drop(columns = 'covid_res')
     y = covid['covid_res']
@@ -99,8 +117,9 @@ def montar_modelo(estimador, base, opt_params = None, fit = True):
     ]
 
     # ... e criar a pipeline
-    model = Pipeline(
+    model = Pipeline_threshold(
         steps = steps,
+        threshold = threshold
     )
 
     # setar os parametros otimizados
@@ -126,7 +145,7 @@ def preproc_pipe(covid_raw):
     )
     
     return covid
-
+#%%
 if __name__ == '__main__':
 
     # arquivos
@@ -171,7 +190,7 @@ if __name__ == '__main__':
         'xgboost__validate_parameters': 1,
         'xgboost__verbosity': None
     }
-    threshold = 0.24 # TODO: implementar classe com API fit predict que implemente o threshold customizado
+    threshold = 0.24
 
     # import
     covid_raw = pd.read_csv(DBFILE, index_col = 'Unnamed: 0')
@@ -188,6 +207,7 @@ if __name__ == '__main__':
         base = covid,
         estimador = estimador_final,
         opt_params = opt_params,
+        threshold = threshold,
         fit = True
     )
 
@@ -201,7 +221,7 @@ if __name__ == '__main__':
     model_export['base_treino'] = covid
 
     # salvar via pickle
-    # with open(MODELBINFILE, 'wb') as modelfile:
-    #     pickler = pickle.Pickler(file = modelfile)
-    #     pickler.dump(model_export)
+    with open(MODELBINFILE, 'wb') as modelfile:
+        pickler = pickle.Pickler(file = modelfile)
+        pickler.dump(model_export)
         
